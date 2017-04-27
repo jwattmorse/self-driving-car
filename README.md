@@ -18,3 +18,7 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * virtualenv ai_final
 * source ai_final/bin/activate
 * pip install keras
+* pip install tensorflow
+
+### Cleanup ###
+* deactivate
