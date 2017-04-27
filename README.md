@@ -17,10 +17,18 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [How to use the simulator](https://medium.com/towards-data-science/introduction-to-udacity-self-driving-car-simulator-4d78198d301d)
 
 ### Startup ###
-* virtualenv ai_final
-* source ai_final/bin/activate
-* pip install keras
-* pip install tensorflow
+
+```
+#!bash
+virtualenv ai_final
+source ai_final/bin/activate
+pip install keras
+pip install tensorflow
+```
 
 ### Cleanup ###
-* deactivate
+
+```
+#!bash
+deactivate
+```
