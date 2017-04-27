@@ -16,6 +16,7 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
 * [How to use the simulator](https://medium.com/towards-data-science/introduction-to-udacity-self-driving-car-simulator-4d78198d301d)
 * [Download Unity](https://store.unity.com/download?ref=personal)
+* [Install conda](https://conda.io/miniconda)
 
 ### Startup ###
 
@@ -25,7 +26,6 @@ virtualenv ai_final
 source ai_final/bin/activate
 pip install keras
 pip install tensorflow
-pip install conda
 ```
 
 ### Cleanup ###
