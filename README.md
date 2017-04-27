@@ -13,3 +13,6 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [Udacity Project](https://github.com/udacity/CarND-Behavioral-Cloning-P3)
 * [Keras Docs](https://keras.io/)
 * [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
+
+### Startup ###
+* source ai_final/bin/activate
