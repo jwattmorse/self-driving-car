@@ -10,6 +10,6 @@ Once ALVINN has been thoroughly evaluated, the next stage is to do better! We wi
 
 The final goal of the project is to learn TensorFlow and implement at least one of the networks we’ve designed in this framework. Once implemented, we will apply our evaluation suite to each of the networks and to ALVINN.
 
-[Udacity Project](https://github.com/udacity/CarND-Behavioral-Cloning-P3)
-[Keras Docs](https://keras.io/)
-[Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
+* [Udacity Project](https://github.com/udacity/CarND-Behavioral-Cloning-P3)
+* [Keras Docs](https://keras.io/)
+* [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
