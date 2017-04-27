@@ -15,4 +15,6 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
 
 ### Startup ###
+* virtualenv ai_final
 * source ai_final/bin/activate
+* pip install keras
