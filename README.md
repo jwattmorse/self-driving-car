@@ -15,6 +15,7 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [Keras Docs](https://keras.io/)
 * [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
 * [How to use the simulator](https://medium.com/towards-data-science/introduction-to-udacity-self-driving-car-simulator-4d78198d301d)
+* [Download Unity](https://store.unity.com/download?ref=personal)
 
 ### Startup ###
 
