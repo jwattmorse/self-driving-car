@@ -25,6 +25,7 @@ virtualenv ai_final
 source ai_final/bin/activate
 pip install keras
 pip install tensorflow
+pip install conda
 ```
 
 ### Cleanup ###
