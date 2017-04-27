@@ -13,6 +13,7 @@ The final goal of the project is to learn TensorFlow and implement at least one 
 * [Udacity Project](https://github.com/udacity/CarND-Behavioral-Cloning-P3)
 * [Keras Docs](https://keras.io/)
 * [Keras Tutorial](https://elitedatascience.com/keras-tutorial-deep-learning-in-python)
+* [How to use the simulator](https://medium.com/towards-data-science/introduction-to-udacity-self-driving-car-simulator-4d78198d301d)
 
 ### Startup ###
 * virtualenv ai_final
