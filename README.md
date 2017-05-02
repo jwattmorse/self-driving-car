@@ -26,6 +26,10 @@ virtualenv ai_final
 source ai_final/bin/activate
 pip install keras
 pip install tensorflow
+pip install flask-socketio
+pip install eventlet
+pip install pil
+pip install h5py
 ```
 
 ### Cleanup ###
