@@ -28,7 +28,7 @@ pip install keras
 pip install tensorflow
 pip install flask-socketio
 pip install eventlet
-pip install pil
+pip install pillow
 pip install h5py
 ```
 
