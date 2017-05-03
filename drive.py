@@ -11,6 +11,8 @@ import eventlet.wsgi
 from PIL import Image
 from flask import Flask
 from io import BytesIO
+from read_data import transform_image
+from model import get_steering_angle
 
 from keras.models import load_model
 import h5py
@@ -61,7 +63,10 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+        image_array = transform_image(image_array)
+        pred_array = model.predict(image_array, batch_size=1)
+        max_idx = np.argmax(pred_array)
+        steering_angle = get_steering_angle(max_idx)
 
         throttle = controller.update(float(speed))
 

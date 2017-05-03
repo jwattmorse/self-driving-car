@@ -12,6 +12,9 @@ def read_data(folder_name):
         images[i] = get_img(my_data['image'][0])
     return (images,my_data['steering'].as_matrix())
 
+def transform_image(image_array):
+    return np.array([misc.imresize(image_array[:,:,-1],(30,32)).flatten().tolist()])
+    
 def img_from_file(folder_name,file_name):
     raw_img =  misc.imread(folder_name + '/IMG/' + file_name,mode = 'RGB')
     return misc.imresize(raw_img[:,:,-1],(30,32)).flatten()

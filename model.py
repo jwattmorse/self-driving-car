@@ -47,8 +47,20 @@ def compNN():
     #print score
     print(model)
     model.save('model.h5')
+
+    #    image_array = x_train[0]
+#    image_array = np.array([[1]*960])
+
+ #   image_array = np.array([x_train[0]])
+    print(model.predict(np.array([x_train[0]])))
+    
     return model
- 
+
+def get_steering_angle(idx):
+    total_angle = max_steer-min_steer
+    frac = idx/30
+    return float(frac*total_angle + min_steer)
+    
 def generate_steering(angles):
     res = []
     for angle in angles:
@@ -62,7 +74,8 @@ def generate_steering(angles):
 
 def bin(angle):
     total_angle = max_steer-min_steer
-    angle_frac = (angle + min_steer)/total_angle
+    angle_frac = (angle - min_steer)/total_angle
     return int(angle_frac*30//1)
 
 if __name__ == "__main__": main()
+    
