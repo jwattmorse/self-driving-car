@@ -10,8 +10,8 @@ from read_data import read_data as rd
 import numpy as np
 import sys
 
-max_steer = .4363
-min_steer = -.4363
+max_steer = 1.0
+min_steer = -1.0
 
 def main ():
     compNN()
