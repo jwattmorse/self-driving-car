@@ -11,6 +11,8 @@ import eventlet.wsgi
 from PIL import Image
 from flask import Flask
 from io import BytesIO
+from scipy.ndimage.measurements import center_of_mass
+
 from read_data import transform_image
 from model import get_steering_angle
 
@@ -65,12 +67,11 @@ def telemetry(sid, data):
         image_array = np.asarray(image)
         image_array = transform_image(image_array)
         pred_array = model.predict(image_array, batch_size=1)
-        max_idx = np.argmax(pred_array)
+        #Floor of center of mass
+        max_idx = center_of_mass(pred_array)[1]//1
         steering_angle = get_steering_angle(max_idx)
-
         throttle = controller.update(float(speed))
-
-        print(steering_angle, throttle)
+        
         send_control(steering_angle, throttle)
 
         # save frame

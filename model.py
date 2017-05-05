@@ -20,8 +20,7 @@ def compNN():
 
     (x_train,y_train) =  rd(sys.argv[1])
     y_train = generate_steering(y_train)
-    y_train = np_utils.to_categorical(y_train,30)
-    
+#    y_train = np_utils.to_categorical(y_train,30)
     x_train = x_train.astype('float32')
     x_train /= 255
 
@@ -64,18 +63,16 @@ def get_steering_angle(idx):
 def generate_steering(angles):
     res = []
     for angle in angles:
-        """
         new_y = [0]*30
-        new_y[bin(angle)] = 1
+        hill = [.1,.32,.61,.89,1,.89,.61,.32,.1]
+        y_bin = bin(angle)
+        new_y[(y_bin-4):(y_bin+4)] = hill
         res.append(new_y)
-        """
-        res.append(bin(angle))
     return np.array(res)
 
 def bin(angle):
     total_angle = max_steer-min_steer
     angle_frac = (angle - min_steer)/total_angle
-    return int(angle_frac*30//1)
+    return int(angle_frac*29//1)
 
 if __name__ == "__main__": main()
-    
