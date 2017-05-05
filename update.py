@@ -19,14 +19,14 @@ min_steer = -1.0
 
 def main (argv):
     curmodel = argv[0]
-    datafile = argv[2]
+    datafile = argv[1]
     return update(curmodel, datafile)
 
 def update(mod, data):
+    print (data)
     (x_train,y_train) =  rd(data)
     y_train = generate_steering(y_train)
     y_train = np_utils.to_categorical(y_train,30)
-    
 
     x_train = x_train.astype('float32')
     x_train /= 255
@@ -34,5 +34,5 @@ def update(mod, data):
     return mod.fit(x_train, y_train, batch_size = 32, epochs = 15, verbose = 2)
 
 
-if __name___ == "__main__":
+if __name__ == "__main__":
     main(sys.argv[1:])
