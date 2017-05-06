@@ -67,9 +67,9 @@ def telemetry(sid, data):
         image_array = np.asarray(image)
         image_array = transform_image(image_array)
         pred_array = model.predict(image_array, batch_size=1)
-        #Floor of center of mass
-        max_idx = center_of_mass(pred_array)[1]//1
-        steering_angle = get_steering_angle(max_idx)
+        str_idx = calidx(pred_array[0])
+        steering_angle = get_steering_angle(str_idx)
+        print (steering_angle)
         throttle = controller.update(float(speed))
         
         send_control(steering_angle, throttle)
@@ -89,6 +89,37 @@ def connect(sid, environ):
     print("connect ", sid)
     send_control(0, 0)
 
+#first finds max and then computes center around the max
+def calidx(arg):
+    mx = float("-inf")
+    max_idx = -1
+    for x in range(0,arg.size):
+        cur = arg[x]
+        if  mx < cur:
+            mx = cur
+            max_idx = x
+
+    # determine start and end index
+    start_i = max_idx - 4
+    end_i = max_idx + 5
+    if start_i < 0:
+        start_i = 0
+    if end_i >= 31:
+        end_i = 30
+    
+    small_array = arg[start_i:end_i]
+    ret_idx = center_of_mass(small_array)         
+    return ret_idx[0] + float(start_i)
+
+#function that computes center of mass
+def COMJAC(arg):
+    total = 0.0
+    com = 0.0
+    for x in range(0, arg.size):
+        total += arg[x]
+        com += arg[x]*(x+1)
+    
+    print (com/total - 1)
 
 def send_control(steering_angle, throttle):
     sio.emit(

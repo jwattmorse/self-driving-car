@@ -5,7 +5,7 @@ import numpy as np
 from pandas import read_csv
 import pandas as pd
 def read_data(folder_name):
-    my_data = read_csv(folder_name + '/driving_log.csv',usecols = [2,3])
+    my_data = read_csv(folder_name + '/driving_log.csv',usecols = [0,3])
     my_data.columns = ['image','steering']
     get_img = lambda file_name: img_from_file(folder_name,file_name.rsplit('/', 1)[-1])
     images = np.ndarray(shape=(my_data.shape[0],960), dtype=int)
