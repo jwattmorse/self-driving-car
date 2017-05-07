@@ -12,6 +12,7 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 from scipy.ndimage.measurements import center_of_mass
+from scipy import misc
 
 from read_data import transform_image
 from model import get_steering_angle
@@ -65,20 +66,26 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        image_array = transform_image(image_array)
-        pred_array = model.predict(image_array, batch_size=1)
+        image_array_t = transform_image(image_array)
+        pred_array = model.predict(image_array_t, batch_size=1)
         str_idx = calidx(pred_array[0])
         steering_angle = get_steering_angle(str_idx)
         print (steering_angle)
         throttle = controller.update(float(speed))
+
         
         send_control(steering_angle, throttle)
-
+        
         # save frame
         if args.image_folder != '':
             timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
             image_filename = os.path.join(args.image_folder, timestamp)
             image.save('{}.jpg'.format(image_filename))
+            
+            temp1 = misc.imresize(image_array,(30,32))
+            misc.imsave('{}.jpg'.format(image_filename + '_reduced'), temp1)
+            temp2 = misc.imresize(image_array[:,:,-1],(30,32))
+            misc.imsave('{}.jpg'.format(image_filename + '_bw'), temp2)
     else:
         # NOTE: DON'T EDIT THIS.
         sio.emit('manual', data={}, skip_sid=True)
