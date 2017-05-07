@@ -81,6 +81,6 @@ def generate_steering(angles):
 def bin(angle):
     total_angle = max_steer-min_steer
     angle_frac = (angle - min_steer)/total_angle
-    return int(angle_frac*29//1)
+    return int(round(angle_frac*29))
 
 if __name__ == "__main__": main()
