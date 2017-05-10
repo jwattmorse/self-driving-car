@@ -40,25 +40,39 @@ def new_steering_angle(steering_angle,speed,s,t):
 from scipy.ndimage.interpolation import shift,rotate
 
 def shift_image(image_array,s):
-    return shift(image_array,(s,0))
+    # Note: We need to figure out how to convert pixels to feet!
+    # Question: should we crop the sides as well?
+    # Definitely crop top and bottom every time so that's fine
+    # I think we crop top and bottom and interpolate sides (yup!)
+    # -.6 to .6 meters (roughly 1/3 of the image)
+    # We could use the size of car for conversion from pixels to feet
+    s = s*image_array.shape[2]
+    return shift(image_array,(0,s,0))
 def rotate_image(image_array,t):
-    pass
+    # -6 to 6 degrees
+    return rotate(image_array,t)
 def interpolate_image(image_array,s,t):
     pass
 def random_augment(image_array,s_range,t_range):
     pass
-
+def crop_top_and_bottom(image_array,t,b):
+    
 
 #=======================================
 # Reflect image and negate steering angle
 #======================================
 
 from read_data import img_from_file
+from scipy import misc
+from PIL import Image
 if __name__ == "__main__":
-    file_name = sys.args[1]
-    out_file_name = 'augment_test'
+    file_name = sys.argv[1]
+    out_file_name = 'augment_test.jpg'
     image_array = misc.imread(file_name,mode = 'RGB')
-    # Do operation
-    image.save('{}.jpg'.format(out_file_name))
+    out_image = rotate_image(image_array,-6)
+    out_image = shift(out_image,(0,5,0))
+    misc.imsave(out_file_name, out_image)
+    img = Image.open(out_file_name)
+    img.show()
 
     
