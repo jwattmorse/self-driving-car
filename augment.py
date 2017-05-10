@@ -1,5 +1,5 @@
 from math import cos,tan,sqrt,sin,asin
-
+import sys
 
 #==========================================================
 # Calculate steering angle based on shifted/translate image
@@ -37,15 +37,28 @@ def new_steering_angle(steering_angle,speed,s,t):
 #==========================
 # Shift and translate image
 #==========================
+from scipy.ndimage.interpolation import shift,rotate
 
-
-
+def shift_image(image_array,s):
+    return shift(image_array,(s,0))
+def rotate_image(image_array,t):
+    pass
+def interpolate_image(image_array,s,t):
+    pass
+def random_augment(image_array,s_range,t_range):
+    pass
 
 
 #=======================================
 # Reflect image and negate steering angle
 #======================================
 
+from read_data import img_from_file
+if __name__ == "__main__":
+    file_name = sys.args[1]
+    out_file_name = 'augment_test'
+    image_array = misc.imread(file_name,mode = 'RGB')
+    # Do operation
+    image.save('{}.jpg'.format(out_file_name))
 
-
-
+    
