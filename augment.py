@@ -46,8 +46,21 @@ def shift_image(image_array,s):
     # I think we crop top and bottom and interpolate sides (yup!)
     # -.6 to .6 meters (roughly 1/3 of the image)
     # We could use the size of car for conversion from pixels to feet
-    s = s*image_array.shape[2]
-    return shift(image_array,(0,s,0))
+    # figure out slope
+    slope = 1/4
+    s = int(s*image_array.shape[1])    
+    new_image = shift(image_array,(0,s,0))
+    if s > 0:
+        for x in range(s):
+            for y in range(int((s-x)*slope),image_array.shape[0]):
+                new_image[y][x] = new_image[y-int((s-x)*slope),s]
+#    else:
+#        xstart = image_array.shape[1] - s        
+#        for x in range(xlim,image_array.shape[1]):
+#            for y in range(int((s-
+                
+    return new_image
+
 def rotate_image(image_array,t):
     # -6 to 6 degrees
     return rotate(image_array,t)
@@ -56,7 +69,7 @@ def interpolate_image(image_array,s,t):
 def random_augment(image_array,s_range,t_range):
     pass
 def crop_top_and_bottom(image_array,t,b):
-    
+    pass
 
 #=======================================
 # Reflect image and negate steering angle
@@ -69,8 +82,8 @@ if __name__ == "__main__":
     file_name = sys.argv[1]
     out_file_name = 'augment_test.jpg'
     image_array = misc.imread(file_name,mode = 'RGB')
-    out_image = rotate_image(image_array,-6)
-    out_image = shift(out_image,(0,5,0))
+    out_image = rotate_image(image_array,0)
+    out_image = shift_image(out_image,1/8)
     misc.imsave(out_file_name, out_image)
     img = Image.open(out_file_name)
     img.show()
