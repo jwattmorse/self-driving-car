@@ -67,6 +67,8 @@ def telemetry(sid, data):
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
         image_array_t = transform_image(image_array)
+        print(image_array_t)
+        print(image_array_t.shape)
         pred_array = model.predict(image_array_t, batch_size=1)
         str_idx = calidx(pred_array[0])
         steering_angle = get_steering_angle(str_idx)

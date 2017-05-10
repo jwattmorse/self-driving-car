@@ -42,9 +42,6 @@ def compNN():
     # nb_epochs = 40 from ALVINN '88
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
-    print(y_train.shape)
-    print(y_train[0])
-    print(y_train[0].shape)
     model.fit(x_train, y_train, batch_size = 32, epochs = 15, verbose = 2)
 
 
