@@ -52,7 +52,7 @@ def compNN():
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
     #print score
-    model.save('model.h5')
+    model.save('modelOutside.h5')
 
     # Evaluate how well the model learns the training data
     print(model.evaluate(x_test, y_test, verbose=2))
