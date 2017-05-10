@@ -43,13 +43,16 @@ def compNN():
     # nb_epochs = 40 from ALVINN '88
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
+    print(y_train.shape)
+    print(y_train[0])
+    print(y_train[0].shape)
     model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2)
 
 
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
     #print score
-    model.save('model.h5')
+    model.save('modelOutside.h5')
 
     # Evaluate how well the model learns the training data
     print(model.evaluate(x_test, y_test, verbose=2))

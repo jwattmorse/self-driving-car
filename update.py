@@ -31,9 +31,9 @@ def update(mod, data):
     x_train = x_train.astype('float32')
     x_train /= 255
 
-    mod.fit(x_train, y_train, batch_size = 32, epochs = 15, verbose = 2)
+    mod.fit(x_train, y_train, batch_size = 32, epochs = 60, verbose = 2)
     
-    mod.save('mod.h5')
+    mod.save('model.h5')
     
 if __name__ == "__main__":
     main(sys.argv[1:])

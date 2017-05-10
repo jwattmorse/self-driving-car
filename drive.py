@@ -25,6 +25,10 @@ sio = socketio.Server()
 app = Flask(__name__)
 model = None
 prev_image_array = None
+n = 0
+mean = 0.0
+runCal = 0.0
+sd = 0.0
 
 
 class SimplePIController:
@@ -70,9 +74,13 @@ def telemetry(sid, data):
         print(image_array_t)
         print(image_array_t.shape)
         pred_array = model.predict(image_array_t, batch_size=1)
+        print (pred_array)
         str_idx = calidx(pred_array[0])
         steering_angle = get_steering_angle(str_idx)
-        print (steering_angle)
+        #trackingData(steering_angle)
+        #print (steering_angle)
+        #print (mean)
+        #print (sd)
         throttle = controller.update(float(speed))
 
         
@@ -83,7 +91,6 @@ def telemetry(sid, data):
             timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
             image_filename = os.path.join(args.image_folder, timestamp)
             image.save('{}.jpg'.format(image_filename))
-            
             temp1 = misc.imresize(image_array,(30,32))
             misc.imsave('{}.jpg'.format(image_filename + '_reduced'), temp1)
             temp2 = misc.imresize(image_array[:,:,-1],(30,32))
@@ -98,8 +105,28 @@ def connect(sid, environ):
     print("connect ", sid)
     send_control(0, 0)
 
+
+# using Welford Algorithm to ch k
+def trackingData(angle):
+    global n
+    global mean
+    global runCal
+    global sd
+
+    n += 1
+    delta = angle - mean
+    mean += delta/n
+    delta2 = angle - mean
+    runCal += delta*delta2
+    if n < 2:
+        sd = 0.0
+    else:
+        sd = M2 / (n - 1)
+
 #first finds max and then computes center around the max
 def calidx(arg):
+    max_idx = np.argmax(arg)
+    """
     mx = float("-inf")
     max_idx = -1
     for x in range(0,arg.size):
@@ -107,7 +134,9 @@ def calidx(arg):
         if  mx < cur:
             mx = cur
             max_idx = x
-
+    """
+    #print (mx)
+    #print (max_idx)
     # determine start and end index
     start_i = max_idx - 4
     end_i = max_idx + 5
@@ -117,7 +146,10 @@ def calidx(arg):
         end_i = 30
     
     small_array = arg[start_i:end_i]
-    ret_idx = center_of_mass(small_array)         
+    #print (small_array)
+    ret_idx = center_of_mass(small_array)
+    #print (ret_idx[0] + float(start_i))
+    #print (ret_idx[0])
     return ret_idx[0] + float(start_i)
 
 #function that computes center of mass
