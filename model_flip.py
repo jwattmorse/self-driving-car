@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense # SHOULD CONFIRM
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
-from read_data import read_data as rd
+from read_data_flip import read_data as rd
 from sklearn.model_selection import train_test_split
 import numpy as np
 
@@ -49,7 +49,7 @@ def compNN():
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
     #print score
-    model.save('model.h5')
+    model.save('modelflip.h5')
 
     # Evaluate how well the model learns the training data
     print(model.evaluate(x_test, y_test, verbose=2))
