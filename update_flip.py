@@ -8,7 +8,7 @@ from keras.models import load_model as lm
 from keras.layers import Dense # SHOULD CONFIRM                                                      
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
-from read_data import read_data as rd
+from read_data_flip import read_data as rd
 from model import generate_steering
 from model import bin
 import numpy as np
@@ -31,8 +31,9 @@ def update(mod, data):
     x_train = x_train.astype('float32')
     x_train /= 255
 
-    mod.fit(x_train, y_train, batch_size = 32, epochs = 60, verbose = 2, shuffle=True)    
-    mod.save('model.h5')
+    mod.fit(x_train, y_train, batch_size = 32, epochs = 60, verbose = 2, shuffle=True)
+    
+    mod.save('modelflip.h5')
     
 if __name__ == "__main__":
     main(sys.argv[1:])

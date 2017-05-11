@@ -21,7 +21,6 @@ def img_from_file(folder_name,file_name):
     return misc.imresize(raw_img[:,:,-1],(30,32)).flatten()
 
 if __name__ == "__main__":
-    data = read_data('data_4_27_17')
-    print(data)
-    print(data.shape)
+    data = read_data('data_5_7_2017_JWM2')
+    print(data[1].shape)
     
