@@ -44,7 +44,8 @@ def compNN():
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
 
-    model.fit_generator(alvinn_generator(x_train,y_train,32), steps_per_epoch = 32, epochs = 40, verbose = 2)
+    buf_size = 210
+    model.fit_generator(alvinn_generator(x_train,y_train,buf_size), steps_per_epoch = buf_size, epochs = 1, verbose = 2)
 #    model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
 
 
@@ -54,8 +55,7 @@ def compNN():
     model.save('model.h5')
 
     # Evaluate how well the model learns the training data
-    print(model.evaluate(x_test, y_test, verbose=2))
-    
+    print(model.evaluate(x_test, y_test, verbose=2))    
     return model
 
 
@@ -63,26 +63,69 @@ def compNN():
 # Code structure for this method taken from
 # https://medium.com/@fromtheast/implement-fit-generator-in-keras-61aa2786ce98
 import numpy as np
-def alvinn_generator(features,labels,batch_size):
+def alvinn_generator(x_train, y_train, buf_size):
     
     # Specify result feature and label shapes
     result_feature_shape = [960]
     result_label_shape = [30]
+    
+    feature_buf_shape = tuple([buf_size] + result_feature_shape)
+    label_buf_shape = tuple([buf_size] + result_label_shape)
+    
+    image_iterator = iter(transformation_generator(x_train,y_train))
 
-    batch_feature_shape = tuple([batch_size] + result_feature_shape)
-    batch_label_shape = tuple([batch_size] + result_label_shape)
-    batch_features = np.ndarray(batch_feature_shape)
-    batch_labels = np.ndarray(batch_label_shape)
+    # Initialize training buffer
+    xbuff = np.ndarray(feature_buf_shape)
+    ybuff = np.ndarray(label_buf_shape)
+    tot = 0.0
+    mean = 0.0
+    for i in range(buf_size):
+        (xbuff[i],ybuff[i]) = next(image_iterator)
+        tot += ybuff[i]
+    mean = tot / buf_size
+    yield (xbuff, generate_steering(ybuff))
     
     while True:
-        for i in range(batch_size):
-            index = np.random.randint(0,features.shape[0])
-            batch_features[i] = process_image(features[index])
-            batch_labels[i] = labels[index]
-        yield (batch_features, batch_labels)
+        for i in range(15):
+            (image_array,steering_angle) = next(image_iterator)
+            update_buffer(xbuff,ybuff,image_array,steering_angle)
+        yield (xbuff,generate_steering(ybuff))
 
-def process_image(image_array):
-    return image_array
+# Simple update buffer code
+# Evicts image/steering_angle pair that most reduces the absolute value
+# of the mean
+def update_buffer(xbuff,ybuff,tot,image_array,steering_angle):
+    # before propagation based on buffer
+    #eviIdx
+    indx = -1
+    newTot = tot    
+    buf_size = xbuff.shape[0]
+    mean = tot/buf_size
+    for j in range(buf_size):
+       newmean = (tot + ( steering_angle - ybuff[j]))/buf_size
+       if abs(newmean) < abs(mean):
+           print ("changed mean")
+           mean = newmean
+           indx = j
+           newTot = tot + (steering_angle -ybuff[j])
+    # if cant improve mean, randomly select int to evict
+    if indx == -1:
+        indx = randint(0,199)
+        newTot += (steering_angle-ybuff[indx])
+        mean = newTot/buf_size
+    xbuff[indx] = image_array
+    ybuff[indx] = steering_angle
+    return newTot
+        
+def transformation_generator(features,labels):
+    for (image_array,steering_angle) in zip(features,labels):
+        for i in range(14):
+            yield process_image(image_array,steering_angle)
+        yield (image_array, steering_angle)
+        
+def process_image(image_array, steering_angle):
+    # do transofmrations    
+    return (image_array, steering_angle)
 
 def get_steering_angle(idx):
     total_angle = max_steer-min_steer
