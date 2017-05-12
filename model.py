@@ -21,6 +21,7 @@ def main ():
 def compNN():
 
     (x_train,y_train) =  rd(sys.argv[1])
+    print (y_train.shape)
     y = generate_steering(y_train)
     x = x_train.astype('float32')
     x /= 255
