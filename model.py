@@ -131,16 +131,16 @@ def transformation_generator(features,labels):
         center_image = image_arrays[0]
         left_image = image_arrays[1]
         right_image = image_arrays[2]
-        
-        right_steer = get_new_steering_angle(steering_angle,1/4,0)
-        left_steer = get_new_steering_angle(steering_angle,-1/4,0)        
 
-        
         # Yield left, right and center
+        right_steer = get_new_steering_angle(steering_angle,1/3,0)
+        left_steer = get_new_steering_angle(steering_angle,-1/3,0)        
+    
         yield (center_image.flatten(), steering_angle)
         yield (left_image.flatten(), left_steer)
         yield (right_image.flatten(), right_steer)
 
+        # Yield reflected
         center_reflected = np.fliplr(center_image)
         left_reflected = np.fliplr(left_image)
         right_reflected = np.fliplr(right_image)
@@ -148,6 +148,12 @@ def transformation_generator(features,labels):
         yield(center_reflected.flatten(),-1*steering_angle)
         yield(left_reflected.flatten(), -1*left_steer)
         yield(right_reflected.flatten(), -1*right_steer)
+
+        blur_slope = 1/2
+        shift_range = 1/3
+        s = np.random.uniform(-1*shift_range, shift_range)
+        (out_image,new_steering_angle) = shift_image(image_array,steering_angle,s,blur_slope)
+        out_image = crop_top(out_image,blur_slope,shift_range)
         
 def process_image(image_array, steering_angle):
     return (image_array, steering_angle)
