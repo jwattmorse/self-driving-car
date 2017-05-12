@@ -81,6 +81,7 @@ def shift_image(image_array,steering_angle,s_orig,blur_slope):
     x_max = image_array.shape[1]
     s = int(s_orig*x_max)
     new_image = shift(image_array,(0,s,0))
+
     y_max = image_array.shape[0]
     if s > 0:
         for x in range(s):
@@ -94,9 +95,6 @@ def shift_image(image_array,steering_angle,s_orig,blur_slope):
                 new_image[y][x] = new_image[y-int((x-x_start)*blur_slope),x_start-1]
     new_steering_angle = get_new_steering_angle(steering_angle,s_orig,0)
     return (new_image, new_steering_angle)
-
-def random_augment(image_array,s_range,t_range):
-    pass
 
 def crop_top(image_array,blur_slope,shift_range):
     # crop down to blur
@@ -147,19 +145,21 @@ def draw_steering_angle(image_array,steering_angle,s):
 #=======================================
 # Test image augmentation functions
 #======================================
-from read_data import img_from_file,read_data_test
+from read_data import img_from_file,read_data_test,raw_img_from_file
 def test_augment(sample_size,shift_range = 1/3):
     blur_slope = 1/2
     (test_images,test_steering_angles) = read_data_test('data_short',shape = (160,320,3),mode = 'colored')
     num_images = test_images.shape[0]
     step = num_images//sample_size
     j = 1
-    #in_file_name = sys.argv[1]
-    #image_array = misc.imread(in_file_name,mode = 'RGB')
+ 
     for i in np.random.randint(0,num_images,sample_size):
         print('random image: ',i)
+        in_file_name = 'data_short/IMG/center_2017_05_10_22_53_00_685.jpg'
+        #image_array = raw_img_from_file('data_short','center_2017_05_10_22_53_00_685.jpg')
         image_array = test_images[i]
         steering_angle = test_steering_angles[i]
+        steering_angle = -.15
         mid_file_name = 'mid_file.png'
         out_file_name = 'test_output/augment_test' + str(j) + '.jpg'
         j += 1
@@ -170,7 +170,7 @@ def test_augment(sample_size,shift_range = 1/3):
         mid_img.show()
 
         # Will need to do this in generator!
-        s = np.random.uniform(-1*shift_range, shift_range)        
+        s = 1*shift_range #np.random.uniform(-1*shift_range, shift_range)        
         (out_image,new_steering_angle) = shift_image(image_array,steering_angle,s,blur_slope)
         out_image = crop_top(out_image,blur_slope,shift_range)
         out_image = draw_steering_angle(out_image,new_steering_angle,s)
@@ -195,7 +195,7 @@ def test_left_right(which = 'left'):
     j = 1
     #in_file_name = sys.argv[1]
     #image_array = misc.imread(in_file_name,mode = 'RGB')
-    for i in np.random.randint(0,num_images,sample_size):
+    for i in np.random.randint(0,num_images,sample_size):        
         print('random image: ',i)
         print('which = ',which)
         image_array = test_images[i]
@@ -204,7 +204,7 @@ def test_left_right(which = 'left'):
         out_file_name = 'test_output/augment_test' + str(j) + '.jpg'
         j += 1
         mid_array = deepcopy(image_array)
-        mid_array = draw_steering_angle(mid_array,steering_angle,0)
+#        mid_array = draw_steering_angle(mid_array,steering_angle,0)
         misc.imsave(mid_file_name, mid_array)
         mid_img = Image.open(mid_file_name)
         mid_img.show()
@@ -214,7 +214,7 @@ def test_left_right(which = 'left'):
         new_steering_angle = get_new_steering_angle(steering_angle,s,0)
         
         out_image = crop_top(out_image,1/16)
-        out_image = draw_steering_angle(out_image,new_steering_angle,s)
+#        out_image = draw_steering_angle(out_image,new_steering_angle,s)
         misc.imsave(out_file_name, out_image)
         img_out = Image.open(out_file_name)
         img_out.show()

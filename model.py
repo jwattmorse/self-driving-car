@@ -20,19 +20,12 @@ def main ():
     compNN()
 
 def compNN():
-
-<<<<<<< HEAD
-    (x_train,y_train) =  read_all_images(sys.argv[1])
+    (x_train,y_train) = read_all_images(sys.argv[1])
     y = y_train
-=======
-    (x_train,y_train) =  rd(sys.argv[1])
-    print (y_train.shape)
-    y = generate_steering(y_train)
->>>>>>> c6f5942bb04d20aff06ac67b02aa35229cc5cc7b
     x = x_train.astype('float32')
     x /= 255
-    
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
+
+#    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
 
     # For future testing code...not currently relavent
     #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
@@ -50,9 +43,9 @@ def compNN():
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
 
-    buf_size = 210
-    model.fit_generator(alvinn_generator(x_train,y_train,buf_size), steps_per_epoch = int(x_train.shape[0]), epochs = 10,verbose = 2)
-#    model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
+    buf_size = 200
+    model.fit_generator(alvinn_generator(x,y,buf_size), steps_per_epoch = int((x_train.shape[0])*200), epochs = 3,verbose = 2)
+#    model.fit(x, y, epochs = 4, verbose = 2, shuffle=True)
 
 
     # if we wanted to check how we did
@@ -85,25 +78,27 @@ def alvinn_generator(x_train, y_train, buf_size):
     ybuff = np.ndarray(label_buf_shape)
     tot = 0.0
     mean = 0.0
-    for i in range(buf_size):
-        (xbuff[i],ybuff[i]) = next(image_iterator)
-        tot += ybuff[i]
-    mean = tot / buf_size
+#    for i in range(buf_size):
+#        (xbuff[i],ybuff[i]) = next(image_iterator)
+#        tot += ybuff[i]
+#    mean = tot / buf_size
 
-    yield (xbuff, generate_steering(ybuff))
+#    yield (xbuff, generate_steering(ybuff))
+
     
-    i = 0
+#    i = 0
     for (image_array,steering_angle) in image_iterator:
-        if i == 6:
+        print(image_array[0].shape)
+        yield(image_array,steering_angle)
+'''        if i == 1:            
             # Shuffle and yield the buffers
             p = np.random.permutation(ybuff.shape[0])
             xbuff = xbuff[p]
             ybuff = ybuff[p]
-            yield (xbuff,generate_steering(ybuff))
+            yield (xbuff,generate_steering(ybuff))            
             i = 0
         i += 1
-        tot = update_buffer(xbuff,ybuff,tot,image_array,steering_angle)
-
+        tot = update_buffer(xbuff,ybuff,tot,image_array,steering_angle)'''
         
 # Simple update buffer code
 # Evicts image/steering_angle pair that most reduces the absolute value
@@ -122,7 +117,7 @@ def update_buffer(xbuff,ybuff,tot,image_array,steering_angle):
            indx = j
            newTot = tot + (steering_angle -ybuff[j])
     # if cant improve mean, randomly select int to evict
-#    indx = -1
+    #    indx = -1
     if indx == -1:
         indx = np.random.randint(0,199)
         newTot += (steering_angle-ybuff[indx])
@@ -131,7 +126,7 @@ def update_buffer(xbuff,ybuff,tot,image_array,steering_angle):
     ybuff[indx] = steering_angle
     return newTot
 
-from augment import get_new_steering_angle
+from augment import get_new_steering_angle,shift_image
 def transformation_generator(features,labels):
     for (image_arrays,steering_angle) in itertools.cycle(zip(features,labels)):
         center_image = image_arrays[0]
@@ -140,7 +135,7 @@ def transformation_generator(features,labels):
 
         # Yield left, right and center
         right_steer = get_new_steering_angle(steering_angle,1/3,0)
-        left_steer = get_new_steering_angle(steering_angle,-1/3,0)        
+        left_steer = get_new_steering_angle(steering_angle,-1/3,0)
     
         yield (center_image.flatten(), steering_angle)
         yield (left_image.flatten(), left_steer)
@@ -155,11 +150,17 @@ def transformation_generator(features,labels):
         yield(left_reflected.flatten(), -1*left_steer)
         yield(right_reflected.flatten(), -1*right_steer)
 
-        blur_slope = 1/2
-        shift_range = 1/3
-        s = np.random.uniform(-1*shift_range, shift_range)
-        (out_image,new_steering_angle) = shift_image(image_array,steering_angle,s,blur_slope)
-        out_image = crop_top(out_image,blur_slope,shift_range)
+#        blur_slope = 1/2
+#        shift_range = 1/4
+        # Didn't really work
+#        for i in range(3):
+#            if(steering_angle < 0):
+#                s = np.random.uniform(0, shift_range)                
+#            else:
+#                s = np.random.uniform(-1*shift_range,0)  
+#            (out_image,new_steering_angle) = shift_image(center_image,steering_angle,s,blur_slope)
+#            yield(out_image.flatten(),new_steering_angle)
+
         
 def process_image(image_array, steering_angle):
     return (image_array, steering_angle)

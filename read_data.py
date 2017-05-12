@@ -7,7 +7,7 @@ from pandas import read_csv
 import pandas as pd
 def read_data(folder_name):
     my_data = read_csv(folder_name + '/driving_log.csv',usecols = [0,3])
-    my_data.columns = ['image','steering']    
+    my_data.columns = ['image','steering']
     get_img = lambda file_name: img_from_file(folder_name,file_name.rsplit('/', 1)[-1])
     images = np.ndarray(shape=(my_data.shape[0],960), dtype=int)
     for i in range(my_data['image'].shape[0]):
@@ -56,4 +56,8 @@ def img_from_file_grey(folder_name,file_name,shape = (30,32,1)):
 def img_from_file_colored(folder_name,file_name,shape = (30,32,1)):
     raw_img =  misc.imread(folder_name + '/IMG/' + file_name,mode = 'RGB')
     return misc.imresize(raw_img,shape)
+
+def raw_img_from_file(folder_name,file_name):
+    raw_img =  misc.imread(folder_name + '/IMG/' + file_name,mode = 'RGB')
+    return raw_img
     
