@@ -78,10 +78,6 @@ def compNN():
         ybuff[indx] = y[i] 
 
         model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
-    
-
- 
-
 
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
@@ -112,7 +108,6 @@ def generate_steering(angles):
             j += 1
         res[i] = new_y
     return res
-
 
 def bin(angle):
     total_angle = max_steer-min_steer

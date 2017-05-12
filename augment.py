@@ -37,18 +37,18 @@ def calc_r(steering_angle,s,t):
     r_p = calc_r_p(steering_angle)
     l = 20
     sign = 1
-    print('s',s)
-    print('l',l)
-    print('r_p',r_p)
+#    print('s',s)
+#    print('l',l)
+#    print('r_p',r_p)
     d_p = (abs(r_p) - sqrt(r_p**2-l**2))*(r_p/abs(r_p))
     # ALVINN wrong here again!!
     d = d_p + s
-    print('d_p',d_p)
-    print('d',d)
+#    print('d_p',d_p)
+#    print('d',d)
     return (l**2 + d**2)/(2*d)
 
 def get_new_steering_angle(steering_angle,s,t):
-    print('old', steering_angle)
+#    print('old', steering_angle)
     # Steering angle passed in range -1 to 1 so multiply by 25 to get degrees
     # Then call randians to get radians
     # Also, we're looking vertically insteal of horizontally so
@@ -59,13 +59,13 @@ def get_new_steering_angle(steering_angle,s,t):
     s *= lens_width
     
     r = calc_r(steering_angle,s,t)
-    print('r',r)
+#    print('r',r)
     
     angle = asin(wheelbase/r) # in radians
     # Convert to between 1 and -1
     # Convert back to vertical angle by multiplying by -1
     new_steering_angle = -1*degrees(angle)/25
-    print('new',new_steering_angle)
+#    print('new',new_steering_angle)
     return new_steering_angle
 
 #==========================
@@ -101,7 +101,6 @@ def random_augment(image_array,s_range,t_range):
 def crop_top(image_array,blur_slope,shift_range):
     # crop down to blur
     aspect_ratio = image_array.shape[1]/image_array.shape[0]
-    print(aspect_ratio)
     t = shift_range*blur_slope*aspect_ratio
     y_max = image_array.shape[0]
     return image_array[int(y_max*t):,:]
@@ -212,7 +211,8 @@ def test_left_right(which = 'left'):
         out_image = image_array
 
         # Note: also main logic
-        new_steering_angle = get_new_steering_angle(steering_angle,s,0)        
+        new_steering_angle = get_new_steering_angle(steering_angle,s,0)
+        
         out_image = crop_top(out_image,1/16)
         out_image = draw_steering_angle(out_image,new_steering_angle,s)
         misc.imsave(out_file_name, out_image)
