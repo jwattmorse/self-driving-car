@@ -14,7 +14,7 @@ from io import BytesIO
 from scipy.ndimage.measurements import center_of_mass
 from scipy import misc
 
-from read_data import transform_image
+from read_data_CNN import transform_image
 from model import get_steering_angle
 
 from keras.models import load_model
@@ -69,11 +69,11 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        image = image.convert('YCbCr')
         image_array = np.asarray(image)
-        image_array_t = transform_image(image_array)
+        image_array = np.array([image_array])
         
-        
-        pred_array = model.predict(image_array_t, batch_size=1)
+        pred_array = model.predict(image_array, batch_size=1)
         
         str_idx = calidx(pred_array[0])
         steering_angle = get_steering_angle(str_idx)
@@ -215,4 +215,3 @@ if __name__ == '__main__':
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)
-B

@@ -10,7 +10,7 @@ def read_data(folder_name):
     get_img = lambda file_name: img_from_file(folder_name,file_name.rsplit('/', 1)[-1])
     images = np.ndarray(shape=(my_data.shape[0],30,32), dtype=int)
     for i in range(my_data['image'].shape[0]):
-        images[i] = get_img(my_data['image'][0])
+        images[i] = get_img(my_data['image'][i])
     #print (my_data['steering'].shape)
     return flipedSet(images,my_data['steering'].as_matrix())
 

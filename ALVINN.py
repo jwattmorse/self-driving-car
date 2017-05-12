@@ -57,7 +57,7 @@ def compNN():
     model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
 
     # before propagation based on buffer
-    for i in range(200, x[0].size):
+    for i in range(200, x.shape[0]):
         #eviIdx
         indx = -1
         val = y[i]
@@ -77,7 +77,7 @@ def compNN():
         xbuff[indx] = x[i]
         ybuff[indx] = y[i] 
 
-        model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
+        model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 3, verbose = 2, shuffle=True)
 
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)

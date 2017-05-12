@@ -3,10 +3,13 @@ Model for training data
 
 """
 from keras.models import Sequential
-from keras.layers import Dense # SHOULD CONFIRM
+from keras.layers import Dense, Flatten
 from keras.utils import np_utils
-from keras.preprocessing.image import ImageDataGenerator
-from read_data import read_data as rd
+from keras.layers.normalization import BatchNormalization
+from keras.layers.convolutional import Convolution2D
+
+#from keras.preprocessing.image import ImageDataGenerator
+from read_data_CNN import read_data as rd
 from sklearn.model_selection import train_test_split
 import numpy as np
 
@@ -25,15 +28,28 @@ def compNN():
     x = x_train.astype('float32')
     x /= 255
     
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
+    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
 
-    print (x_train.shape)
+
+
+    
     # For future testing code...not currently relavent
     #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
     # sizob = x_train.shape[0]
 
     model = Sequential ()
-    model.add(Dense(5, activation = 'relu', input_dim = 960))
+    #model.add(BatchNormalization)
+    
+    model.add(Convolution2D(24, (5,5), strides=(2,2), activation = 'relu', input_shape = (160,320,3)))
+    model.add(Convolution2D(36, (5,5), strides= (2,2), activation = 'relu'))
+    model.add(Convolution2D(48, (5,5), strides = (2,2), activation = 'relu'))
+    model.add(Convolution2D(64, (3,3), activation = 'relu'))
+    model.add(Convolution2D(64, (3,3), activation = 'relu'))
+
+    model.add(Flatten())
+    model.add(Dense(1164, activation = 'relu'))
+    model.add(Dense(100, activation = 'relu'))
+    model.add(Dense(50, activation = 'relu'))
     model.add(Dense(30, activation = 'relu'))
 
     # SGD = stochastic gradient decent
@@ -43,16 +59,16 @@ def compNN():
     # nb_epochs = 40 from ALVINN '88
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
-    model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
+    model.fit(x, y, batch_size = 32, epochs = 10, verbose = 2, shuffle=True)
 
 
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
     #print score
-    model.save('model.h5')
+    model.save('modelCNN.h5')
 
     # Evaluate how well the model learns the training data
-    print(model.evaluate(x_test, y_test, verbose=2))
+ #   print(model.evaluate(x_test, y_test, verbose=2))
     
     return model
 

@@ -1,3 +1,4 @@
+
 ### Script to read image data and steering angle into numpy ndarray
 from numpy import genfromtxt
 from scipy import misc

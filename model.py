@@ -21,8 +21,14 @@ def main ():
 
 def compNN():
 
+<<<<<<< HEAD
     (x_train,y_train) =  read_all_images(sys.argv[1])
     y = y_train
+=======
+    (x_train,y_train) =  rd(sys.argv[1])
+    print (y_train.shape)
+    y = generate_steering(y_train)
+>>>>>>> c6f5942bb04d20aff06ac67b02aa35229cc5cc7b
     x = x_train.astype('float32')
     x /= 255
     
