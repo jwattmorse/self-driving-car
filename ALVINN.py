@@ -26,12 +26,10 @@ def compNN():
     tot = 0.0
     mean = 0.0
 
+    # Read in training data
     (x_train,y) =  rd(sys.argv[1])
-    #print (y)
     x = x_train.astype('float32')
     x /= 255
-    #print (x.shape)
-    #print (xbuff.shape)
     
     #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
 
@@ -40,14 +38,8 @@ def compNN():
     # For future testing code...not currently relavent
     #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
     # sizob = x_train.shape[0]
-
-    # fill buffer with 200 images
-    for i in range(200):
-        xbuff[i] = x[i]
-        ybuff[i] = y[i]
-        tot += y[i]
     
-    mean = tot / 200
+
     model = Sequential ()
     model.add(Dense(5, activation = 'relu', input_dim = 960))
     model.add(Dense(30, activation = 'relu'))
@@ -56,7 +48,16 @@ def compNN():
     model.compile(loss = 'mean_squared_error', optimizer = 'SGD')
     model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
 
+
+    # Should make 200 a global constant buff_size that we can tune
+    # fill buffer with 200 images
     # before propagation based on buffer
+    for i in range(200):
+        xbuff[i] = x[i]
+        ybuff[i] = y[i]
+        tot += y[i]
+    mean = tot / 200
+
     for i in range(200, x[0].size):
         #eviIdx
         indx = -1
@@ -79,9 +80,21 @@ def compNN():
 
         model.fit(xbuff, generate_steering(ybuff), batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
     
-
- 
-
+# e.g shape = (160,320,3) or (30,32,1)
+# Code structure for this method taken from
+# https://medium.com/@fromtheast/implement-fit-generator-in-keras-61aa2786ce98
+def avlvinn_generator(features,labels,batch_size,num_pixels):
+    result_feature_shape = (960,)
+    batch_shape = (batch_size,960)
+    batch_features = np.ndarray((batch_shape))
+    batch_labels = np.ndarray(batch_size,30)
+    while True:
+        for i in range(batch_size):
+            index = random.choice(examples.shape[0],1)
+            batch_features[i] = process_image(features[index])
+            batch_labels[i] = labels[index]
+        yield batch_features, batch_labels
+    
 
     # if we wanted to check how we did
     #score = model.evaluate(x_test, ytest, batchsize)
@@ -112,7 +125,6 @@ def generate_steering(angles):
             j += 1
         res[i] = new_y
     return res
-
 
 def bin(angle):
     total_angle = max_steer-min_steer

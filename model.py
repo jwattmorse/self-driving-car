@@ -17,7 +17,7 @@ min_steer = -1.0
 
 def main ():
     compNN()
-
+        
 def compNN():
 
     (x_train,y_train) =  rd(sys.argv[1])
@@ -43,7 +43,9 @@ def compNN():
     # nb_epochs = 40 from ALVINN '88
     # verbose = 2 gives updatge after each epoch
     # shuffle set to True so that train on new samples each time
-    model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
+
+    model.fit_generator(alvinn_generator(x_train,y_train,32), steps_per_epoch = 32, epochs = 40, verbose = 2)
+#    model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
 
 
     # if we wanted to check how we did
@@ -55,6 +57,32 @@ def compNN():
     print(model.evaluate(x_test, y_test, verbose=2))
     
     return model
+
+
+# e.g shape = (160,320,3) or (30,32,1)
+# Code structure for this method taken from
+# https://medium.com/@fromtheast/implement-fit-generator-in-keras-61aa2786ce98
+import numpy as np
+def alvinn_generator(features,labels,batch_size):
+    
+    # Specify result feature and label shapes
+    result_feature_shape = [960]
+    result_label_shape = [30]
+
+    batch_feature_shape = tuple([batch_size] + result_feature_shape)
+    batch_label_shape = tuple([batch_size] + result_label_shape)
+    batch_features = np.ndarray(batch_feature_shape)
+    batch_labels = np.ndarray(batch_label_shape)
+    
+    while True:
+        for i in range(batch_size):
+            index = np.random.randint(0,features.shape[0])
+            batch_features[i] = process_image(features[index])
+            batch_labels[i] = labels[index]
+        yield (batch_features, batch_labels)
+
+def process_image(image_array):
+    return image_array
 
 def get_steering_angle(idx):
     total_angle = max_steer-min_steer
@@ -75,7 +103,7 @@ def generate_steering(angles):
             j += 1
         res[i] = new_y
     return res
-
+        
 def bin(angle):
     total_angle = max_steer-min_steer
     angle_frac = (angle - min_steer)/total_angle

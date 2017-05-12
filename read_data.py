@@ -22,7 +22,6 @@ def img_from_file(folder_name,file_name):
 
 if __name__ == "__main__":
     data = read_data('data_5_7_2017_JWM2')
-    print(data[1].shape)
 
 
 def read_data_test(folder_name, shape = (30,32,1), mode = 'grey', image_cols = [0]):
