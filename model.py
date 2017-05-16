@@ -1,9 +1,12 @@
-"""
-Model for training data
-
+"""                                                                                 
+Jacob Watt-Morse and Ben Solis-Cohen                                               
+5/16/2017                                                                                
+Neural Network based on ALVINN model to drive a 
+car in the udacity self driving car simulator                                                      
+Uses Keras neural nets
 """
 from keras.models import Sequential
-from keras.layers import Dense # SHOULD CONFIRM
+from keras.layers import Dense 
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
 from read_data import read_data as rd
@@ -20,41 +23,42 @@ def main ():
     compNN()
 
 def compNN():
+    # returns pictures tupe of nparrays
+    # first one is of images as arrays, second one is of steering angles
     (x_train,y_train) = read_all_images(sys.argv[1])
-    y = y_train
-    x = x_train.astype('float32')
-    x /= 255
+    
+    # normalizing input
+    x_train = x_train.astype('float32')
+    x_train /= 255
 
-#    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
-
-    # For future testing code...not currently relavent
-    #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
-    # sizob = x_train.shape[0]
-
+    
+    """
+    ALVINN Model from Parmeleu '92
+    Flattened input is completely connected to a middle layer
+    of 5 nodes
+    """
     model = Sequential ()
     model.add(Dense(5, activation = 'relu', input_dim = 960))
+    
+    # output layer of 30 nodes
     model.add(Dense(30, activation = 'relu'))
 
     # SGD = stochastic gradient decent
     model.compile(loss = 'mean_squared_error', optimizer = 'SGD')
 
-    # batch size = SIZE OF TRIAING SET but for now 32
-    # nb_epochs = 40 from ALVINN '88
-    # verbose = 2 gives updatge after each epoch
-    # shuffle set to True so that train on new samples each time
+    # size of buffer that trians teh 
+    buf_size = 210
 
-    buf_size = 200
-    model.fit_generator(alvinn_generator(x,y,buf_size), steps_per_epoch = int((x_train.shape[0])*200), epochs = 3,verbose = 2)
-#    model.fit(x, y, epochs = 4, verbose = 2, shuffle=True)
+    # batch size = size of batch processing                                             
+    # nb_epochs = 40 from ALVINN '88                                 
+    # verbose = 2 gives updatge after each epoch                               
+    # shuffle set to True so that input is shuffled on each training epoch  
+    model.fit_generator(alvinn_generator(x_train,y_train,buf_size), steps_per_epoch = int((x_train.shape[0])*200), epochs = 3,verbose = 2)
 
 
-    # if we wanted to check how we did
-    #score = model.evaluate(x_test, ytest, batchsize)
-    #print score
+    # save model for later
     model.save('model.h5')
 
-    # Evaluate how well the model learns the training data
-#    print(model.evaluate(x_test, y_test, verbose=2))    
     return model
 
 

@@ -1,6 +1,8 @@
 """
-Model for training data
-
+Jacob Watt-Morse and Ben Solis-Cohen
+5/16/2017
+Convolusion Network to Drive a car in 
+the udacity self driving car simulator
 """
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
@@ -23,23 +25,30 @@ def main ():
     compNN()
 
 def compNN():
-
+    
+    # returns pictures tupe of nparrays
+    # first one is of images as arrays, second one is of steering angles     
     (x_train,y_train) =  rd(sys.argv[1])
-    x = x_train.astype('float32')
-    x /= 255
     
-    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
+    # normalizing input
+    x_train = x_train.astype('float32')
+    x_train /= 255
 
 
-
+    """
+    Model based on that detailed in the paper
+    "End to End Learning for Self-Driving Car"
+    Bojarski et al. April 2016 NVIDIA Corporation
     
-    # For future testing code...not currently relavent
-    #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
-    # sizob = x_train.shape[0]
+    Model uses 3 convolution layers of 5x5 size kernals 
+    with 2,2 size strides and 2 layers with 3x3 kernals
+    The output is then flatten and taken through several
+    dense layers.
 
+    Note: Normalizaation layer from paper is handeld by preprosessing
+    steps take above
+    """
     model = Sequential ()
-    #model.add(BatchNormalization)
-    
     model.add(Convolution2D(24, (5,5), strides=(2,2), activation = 'relu', input_shape = (160,320,3)))
     
     model.add(Convolution2D(36, (5,5), strides= (2,2), activation = 'relu'))
@@ -51,30 +60,24 @@ def compNN():
     model.add(Dense(1164, activation = 'relu'))
     model.add(Dense(100, activation = 'relu'))
     model.add(Dense(50, activation = 'relu'))
-
-    model.add(Dense(30, activation = 'relu'))
+    # output layer
+    model.add(Dense(30, activation = 'relu')) 
 
     # SGD = stochastic gradient decent
     model.compile(loss = 'mean_squared_error', optimizer = 'SGD')
 
+    # Input size for the buffer
     buf_size = 210
-    model.fit_generator(alvinn_generator(x,y_train,buf_size), steps_per_epoch = int(x_train.shape[0]), epochs = 50,verbose = 2)
+    model.fit_generator(alvinn_generator(x_train,y_train,buf_size), steps_per_epoch = int(x_train.shape[0]), epochs = 3, verbose = 2)
 
-
-
-    # if we wanted to check how we did
-    #score = model.evaluate(x_test, ytest, batchsize)
-    #print score
+    # save model for later
     model.save('modelCNN.h5')
-
-    # Evaluate how well the model learns the training data
- #   print(model.evaluate(x_test, y_test, verbose=2))
     
     return model
 
-# e.g shape = (160,320,3) or (30,32,1)                                                               
-# Code structure for this method taken from                                                          
-# https://medium.com/@fromtheast/implement-fit-generator-in-keras-61aa2786ce98                       
+# e.g shape = (160,320,3) or (30,32,1)                                      
+# Code structure for this method taken from                                            
+# https://medium.com/@fromtheast/implement-fit-generator-in-keras-61aa2786ce98                    
 import numpy as np
 import itertools
 def alvinn_generator(x_train, y_train, buf_size):
