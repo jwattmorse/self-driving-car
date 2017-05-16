@@ -1,3 +1,14 @@
+"""                                    
+Jacob Watt-Morse and Ben Solis-Cohen   
+5/16/2017
+Function evalutes the accuracy of a self-driving model
+it does so by bringing in a data set provided by the user
+that has not been used to train the model and computing
+how oftens it predictions are the same, left of and right 
+off a human steering angle. Also computers the standard
+and mean squared error for those predictions
+"""
+
 from keras.models import Sequential
 from keras.models import load_model as lm
 from keras.layers import Dense                      
@@ -18,7 +29,11 @@ import sys
 max_steer = 1.0
 min_steer = -1.0
 
+
+
 def main (argv):
+    # builds model
+
     curmodel = lm(argv[0])
     datafile = argv[1]
     tone = errors (curmodel, datafile)
@@ -29,14 +44,14 @@ def main (argv):
     print ("Squared Error: ", tone[4])
 
 
+# function computes function
 def errors(mod, data):
-    mean = 0.0
-    runCal = 0.0
-    err = 0.0
-    serr = 0.0
-    numcor = 0
-    numr = 0
-    numl = 0
+    err = 0.0 # total error
+    serr = 0.0 #total squared error
+    numcor = 0 # numbmer of times guesses corretly
+    numr = 0 # number of times guesses to the right
+    numl = 0 # number of times gueeses to the left
+    
 
     (x_train,y_train) =  rd(data)
     y_train = generate_steering(y_train)
@@ -45,15 +60,18 @@ def errors(mod, data):
     x_train /= 255
     
     
-    l = x_train.shape[0]
-    for z in range(0, l):
+    len = x_train.shape[0] # number of image inputs
 
-        q = y_train[z]   
-        p = np.array([x_train[z].tolist()])
+    # loop goes over every image, takes a prediction for that
+    # image and does a serties of tests to check the above values
+    for z in range(0, len):
+        sterang = y_train[z]   
+        pic = np.array([x_train[z].tolist()])
         
-        max_idx = np.argmax(q)
+        max_idx = np.argmax(sterang)
         
-        pred_array = mod.predict(p, batch_size=1)
+        # prediction for one image 
+        pred_array = mod.predict(pic, batch_size=1)
         res = calidx(pred_array[0])
         if ( res == max_idx):
             numcor += 1

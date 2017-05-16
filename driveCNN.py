@@ -1,3 +1,12 @@
+"""
+Jacob Watt-Morse and Ben Solis-Cohen                                      
+5/16/2017
+See drive.py comments for full details
+This version allows driving on convoluson networks
+"""
+
+
+
 import argparse
 import base64
 from datetime import datetime

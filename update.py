@@ -1,11 +1,13 @@
 """
-should take a precomipled and drive data and updates the model 
-
+Jacob Watt-Morse and Ben Solis-Cohen                               
+5/16/2017                                                          
+Takes in a model and a data set and trains the model 
+and that provided data set, effectively updating the Neural Net
 """
 
 from keras.models import Sequential
 from keras.models import load_model as lm
-from keras.layers import Dense # SHOULD CONFIRM                                                      
+from keras.layers import Dense 
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
 from read_data import read_data as rd
@@ -19,6 +21,7 @@ max_steer = 1.0
 min_steer = -1.0
 
 def main (argv):
+    # builds the model
     curmodel = lm(argv[0]) 
     datafile = argv[1]
     return update(curmodel, datafile)
@@ -31,7 +34,10 @@ def update(mod, data):
     x_train = x_train.astype('float32')
     x_train /= 255
 
+    # keras allows us to update models by calling fit over a old model
     mod.fit(x_train, y_train, batch_size = 32, epochs = 60, verbose = 2, shuffle=True)    
+    
+    # Overwrite old model
     mod.save('model.h5')
     
 if __name__ == "__main__":

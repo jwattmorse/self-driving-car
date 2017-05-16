@@ -1,9 +1,16 @@
-"""
-Model for training data
-
+"""                                                                                                  
+Jacob Watt-Morse and Ben Solis-Cohen
+5/16/2017
+Neural Network based on ALVINN model to drive a
+car in the udacity self driving car simulator
+This model is similar to the simple model except 
+it only the center image along its 
+y axis for every image and then trains on the newly
+doubled set
+Uses Keras neural nets
 """
 from keras.models import Sequential
-from keras.layers import Dense # SHOULD CONFIRM
+from keras.layers import Dense 
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
 from read_data_flip import read_data as rd
@@ -19,7 +26,7 @@ def main ():
     compNN()
 
 def compNN():
-
+    # returns the flipped data set in read
     (x_train,y_train) =  rd(sys.argv[1])
     y = generate_steering(y_train)
     x = x_train.astype('float32')
@@ -28,9 +35,7 @@ def compNN():
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4)
 
     print (x_train.shape)
-    # For future testing code...not currently relavent
-    #x_test = x_test.reshape(x_test.shape[0], 1, 30, 32)
-    # sizob = x_train.shape[0]
+
 
     model = Sequential ()
     model.add(Dense(5, activation = 'relu', input_dim = 960))
@@ -46,9 +51,7 @@ def compNN():
     model.fit(x_train, y_train, batch_size = 32, epochs = 40, verbose = 2, shuffle=True)
 
 
-    # if we wanted to check how we did
-    #score = model.evaluate(x_test, ytest, batchsize)
-    #print score
+    # save for later
     model.save('modelflip.h5')
 
     # Evaluate how well the model learns the training data

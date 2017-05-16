@@ -1,3 +1,14 @@
+"""       
+Jacob Watt-Morse and Ben Solis-Cohen                                      
+5/16/2017
+Bulk of code provided by Udacity for assignment.Found at: 
+https://github.com/udacity/CarND-Behavioral-Cloning-P3/blob/master/README.md
+Our code is indicated
+Code drives the veichle in the udacity self driving car simulator.
+Found here:
+https://github.com/udacity/self-driving-car-sim
+It also tracks the output of the neural net
+"""
 import argparse
 import base64
 from datetime import datetime
@@ -25,10 +36,7 @@ sio = socketio.Server()
 app = Flask(__name__)
 model = None
 prev_image_array = None
-n = 0
-mean = 0.0
-runCal = 0.0
-sd = 0.0
+
 
 
 class SimplePIController:
@@ -69,21 +77,26 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        ######################################################################
+        #### OUR CODE STARTS HERE
+        ######################################################################
         image_array = np.asarray(image)
+        # maniupulates image into input for neural network
         image_array_t = transform_image(image_array)
         
-        
+        # prediction array created by our model
         pred_array = model.predict(image_array_t, batch_size=1)
         
+        # calculates the index to drive
         str_idx = calidx(pred_array[0])
+        # gets the steering angle for that index
         steering_angle = get_steering_angle(str_idx)
-        #trackingData(steering_angle)
-        #print (steering_angle)
-        #print (mean)
-        #print (sd)
-        throttle = controller.update(float(speed))
-
         
+        ######################################################################      
+        #### OUR CODE ENDS  HERE                                                     
+        ######################################################################
+        
+        throttle = controller.update(float(speed))        
         send_control(steering_angle, throttle)
         
         # save frame
@@ -106,61 +119,33 @@ def connect(sid, environ):
     send_control(0, 0)
 
 
-# using Welford Algorithm to ch k
-def trackingData(angle):
-    global n
-    global mean
-    global runCal
-    global sd
-
-    n += 1
-    delta = angle - mean
-    mean += delta/n
-    delta2 = angle - mean
-    runCal += delta*delta2
-    if n < 2:
-        sd = 0.0
-    else:
-        sd = M2 / (n - 1)
-
-#first finds max and then computes center around the max
+######################################################################                       
+#### OUR CODE STARTS HERE                                  
+######################################################################
+# computes the steering index using method detailed in Parmaleu '88
+# it finds a smaller array arround the max value in the output array
+# (9 indexes long because input index was 9 long, and then computes
+# the center of mass around that index
 def calidx(arg):
     max_idx = np.argmax(arg)
-    """
-    mx = float("-inf")
-    max_idx = -1
-    for x in range(0,arg.size):
-        cur = arg[x]
-        if  mx < cur:
-            mx = cur
-            max_idx = x
-    """
-    #print (mx)
-    #print (max_idx)
-    # determine start and end index
     start_i = max_idx - 4
     end_i = max_idx + 5
+    # edge case if start and final index are out of bounds
     if start_i < 0:
         start_i = 0
     if end_i >= 31:
         end_i = 30
     
     small_array = arg[start_i:end_i]
-    #print (small_array)
+    # calculates center of mass
     ret_idx = center_of_mass(small_array)
-    #print (ret_idx[0] + float(start_i))
-    #print (ret_idx[0])
-    return ret_idx[0] + float(start_i)
 
-#function that computes center of mass
-def COMJAC(arg):
-    total = 0.0
-    com = 0.0
-    for x in range(0, arg.size):
-        total += arg[x]
-        com += arg[x]*(x+1)
-    
-    print (com/total - 1)
+    return ret_idx[0] + float(start_i)
+ 
+
+######################################################################                       
+ #### OUR CODE ENDS  HERE                                            
+ ######################################################################  
 
 def send_control(steering_angle, throttle):
     sio.emit(
@@ -215,4 +200,4 @@ if __name__ == '__main__':
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)
-B
+
